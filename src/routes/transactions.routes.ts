@@ -14,18 +14,8 @@ const upload = multer(uploadConfig);
 transactionsRouter.get('/', async (request, response) => {
   const transactionRepository = getCustomRepository(TransactionsRepository);
 
-  const rawTransactionsCategory = await transactionRepository.find({
-    select: ['id', 'title', 'value', 'type'],
+  const transactions = await transactionRepository.find({
     relations: ['category'],
-  });
-
-  const transactions = rawTransactionsCategory.map(rawTransactionCategory => {
-    const transaction = rawTransactionCategory;
-    if (transaction.category) {
-      delete transaction.category.created_at;
-      delete transaction.category.updated_at;
-    }
-    return transaction;
   });
 
   const balance = await transactionRepository.getBalance();
